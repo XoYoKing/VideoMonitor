@@ -15,4 +15,14 @@ public class AppConst {
     public static final int DB_VERSION = 1;
     /**定位间隔时间*/
     public static final long LOCATE_TIME = 60L * 1000;
+    /**请求的URl地址前缀*/
+    public static final String URL_HEAD = "http://120.24.210.186:8080/VCAppService/";
+
+    /**
+     * 请求结果
+     */
+    public interface RetResult{
+        int SUCC = 1;
+        int FAILED = 2;
+    }
 }

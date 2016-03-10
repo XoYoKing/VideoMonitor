@@ -2,6 +2,9 @@ package momo.cn.edu.fjnu.videomoniter.base;
 
 import android.util.Log;
 
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.BitmapAjaxCallback;
+
 import org.xutils.DbManager;
 import org.xutils.x;
 
@@ -28,6 +31,7 @@ public class VideoApplication extends BaseApplication {
      * 初始化APP
      */
     public void initApp() {
+        initAquery();
         initDB();
     }
 
@@ -48,4 +52,19 @@ public class VideoApplication extends BaseApplication {
             mDBManager = x.getDb(dbConfig);
     }
 
+    /**
+     * 初始化Aquery框架
+     */
+    public void initAquery(){
+        //设置网络最大连接数
+        AjaxCallback.setNetworkLimit(8);
+        //设置缓存图标(<50px)的最大数量
+        BitmapAjaxCallback.setIconCacheLimit(20);
+        //设置可以在内存中缓存的最大图片数量
+        BitmapAjaxCallback.setCacheLimit(50);
+        //设置可以缓存的最大图片尺寸
+        BitmapAjaxCallback.setPixelLimit(512 * 512);
+        //设置图片最大缓存像素
+        BitmapAjaxCallback.setMaxPixelLimit(2621440);
+    }
 }

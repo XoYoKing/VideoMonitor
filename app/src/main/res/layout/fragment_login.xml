@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="@color/fragment_background"
+              android:orientation="vertical">
+
+    <include layout="@layout/actionbar_custom"/>
+
     <EditText
+        style="@style/common_edit"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:hint="@string/input_user_name"/>
+
     <EditText
+        style="@style/common_edit"
+        android:inputType="textPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/input_user_name"/>
+        android:hint="@string/input_password"/>
+
     <Button
+        android:id="@+id/btn_login"
+        style="@style/common_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/login"/>
+        android:text="@string/login"/>
 </LinearLayout>

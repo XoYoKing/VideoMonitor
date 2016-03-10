@@ -6,4 +6,10 @@
     <string name="user_name">用户名</string>
     <string name="password">密码</string>
     <string name="login">登录</string>
+    <string name="user_login">用户登录</string>
+    <string name="video_rt_upload">视频实时上传</string>
+    <string name="video_rt_monitor">视频实时监控</string>
+    <string name="photo_capture_upload">拍照上传</string>
+    <string name="video_recorder_upload">视频录制上传</string>
+    <string name="main_menu">主菜单</string>
 </resources>

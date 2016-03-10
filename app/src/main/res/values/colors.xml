@@ -15,6 +15,7 @@
     <color name="green">#00FF00</color>
     <color name="result_points">#c000ff00</color>
     <color name="btn_green">#1DDB08</color>
+    <color name="btn_green_pressed">#AF1DDB08</color>
     <color name="sign_btn_green">#ff25b14d</color>
     <color name="leaf_green">#47A477</color>
     <color name="sign_btn_green_pressed">#af23b14d</color>
@@ -75,5 +76,7 @@
     <color name="half_black">#55000000</color>
 
     <!-- 操作栏背景颜色 -->
-    <color name="actionbar_background">#fbfbfc</color>
+    <color name="actionbar_background">#f6f6f6</color>
+    <!-- fragment背景颜色 -->
+    <color name="fragment_background">#EBEBEB</color>
 </resources>
