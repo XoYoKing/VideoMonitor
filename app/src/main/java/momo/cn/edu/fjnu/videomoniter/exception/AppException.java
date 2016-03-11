@@ -19,4 +19,12 @@ public class AppException extends Exception{
         return "errorCode:" + code + "\n"
                 +"errorMsg:" + errorMsg;
     }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public int getCode() {
+        return code;
+    }
 }

@@ -1,5 +1,7 @@
 package momo.cn.edu.fjnu.videomoniter.service;
 
+import android.util.Log;
+
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -19,34 +21,51 @@ import momo.cn.edu.fjnu.videomoniter.exception.AppException;
  */
 public class NetService {
 
+    public static final String TAG = NetService.class.getSimpleName();
+
     /**
-     * @param method   请求方法
-     * @param params    请求参数
+     * @param method 请求方法
+     * @param params 请求参数
      * @return
      */
-    public static JSONObject request(String method, Map<String, Object> params) throws AppException{
+    public static JSONObject request(String method, Map<String, Object> params) throws AppException {
         AQuery query = new AQuery(CommonValues.application);
         AjaxCallback<String> callback = new AjaxCallback<>();
         callback.url(AppConst.URL_HEAD + method).params(params).type(String.class);
         query.sync(callback);
         String strResult = callback.getResult();
-        if(callback.getStatus().getCode() == AjaxStatus.NETWORK_ERROR || strResult == null ){
+        if (callback.getStatus().getCode() == AjaxStatus.NETWORK_ERROR || strResult == null) {
             //网络错误
             throw new AppException(APPErrorCode.ERROR_NETWORK, "网络错误");
-        }else{
+        } else {
             try {
                 JSONObject resultJson = new JSONObject(strResult);
                 JSONObject content = resultJson.getJSONObject("result");
-                if(content.get("succ") != null){
-                    return content.getJSONObject("succ");
-                }else{
-                    throw new AppException(APPErrorCode.INTERNEL_ERROR, content.getString("error"));
+                try {
+                    content.get("succ");
+                } catch (Exception e) {
+                    if (e.getMessage().equals("No value for succ"))
+                        throw new AppException(APPErrorCode.INTERNEL_ERROR, content.getString("error"));
+                    Log.i(TAG, "locae:" + e.getLocalizedMessage());
+                    Log.i(TAG, "msg:" + e.getMessage());
                 }
-            }catch (Exception e){
-                throw new AppException(APPErrorCode.INVALID_RESPONSE, "非法数据返回");
+                return content.getJSONObject("succ");
+            } catch (Exception e) {
+                Log.i(TAG, "" + e);
+                try {
+                    AppException internelException = (AppException) e;
+                    //服务器内部抛出的错误
+                    if (internelException.getCode() == APPErrorCode.INTERNEL_ERROR)
+                        throw new AppException(APPErrorCode.INTERNEL_ERROR, internelException.getErrorMsg());
+                } catch (ClassCastException ec) {
+                    throw new AppException(APPErrorCode.INVALID_RESPONSE, "服务端非法数据返回");
+                } catch (AppException ea) {
+                    throw new AppException(APPErrorCode.INTERNEL_ERROR, ea.getErrorMsg());
+                }
             }
 
         }
+        return null;
     }
 
 }

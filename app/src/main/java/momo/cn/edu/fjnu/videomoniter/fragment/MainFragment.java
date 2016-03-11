@@ -1,5 +1,6 @@
 package momo.cn.edu.fjnu.videomoniter.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -8,14 +9,26 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONObject;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
+import java.io.File;
+import java.util.UUID;
+
 import momo.cn.edu.fjnu.androidutils.base.BaseFragment;
+import momo.cn.edu.fjnu.androidutils.utils.BitmapUtils;
+import momo.cn.edu.fjnu.androidutils.utils.DialogUtils;
 import momo.cn.edu.fjnu.androidutils.utils.ResourceUtils;
+import momo.cn.edu.fjnu.androidutils.utils.StorageUtils;
 import momo.cn.edu.fjnu.videomoniter.R;
+import momo.cn.edu.fjnu.videomoniter.data.AppConst;
+import momo.cn.edu.fjnu.videomoniter.data.SharedKeys;
+import momo.cn.edu.fjnu.videomoniter.exception.AppException;
+import momo.cn.edu.fjnu.videomoniter.model.net.FileUploadTask;
 
 /**
  * 主目录页面
@@ -47,6 +60,9 @@ public class MainFragment extends BaseFragment{
     /**视频录制上传按钮*/
     @ViewInject(R.id.btn_video_recorder_upload)
     private Button mBtnVideoRecorder;
+
+    /**图片存储目录*/
+    private String mPhotoRawName;
 
     @Nullable
     @Override
@@ -89,7 +105,12 @@ public class MainFragment extends BaseFragment{
         mBtnPhtotoCapture.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
+                File dirFile = new File(AppConst.PHOTO_DIRECTORY);
+                if(!dirFile.exists())
+                    dirFile.mkdirs();
+                mPhotoRawName = UUID.randomUUID().toString() + ".jpg";
+                File photoFile = new File(dirFile, mPhotoRawName);
+                startCamera(photoFile.getAbsolutePath());
             }
         });
 
@@ -100,5 +121,34 @@ public class MainFragment extends BaseFragment{
 
             }
         });
+
+    }
+
+    /**
+     * 拍照回调事件
+     */
+    @Override
+    public void onTakePicture() {
+        File dirFile = new File(AppConst.PHOTO_DIRECTORY);
+        File photoFile = new File(dirFile, mPhotoRawName);
+        String saveScalePhotoName = UUID.randomUUID().toString() + ".jpg";
+        File saveScaleFile = new File(dirFile, saveScalePhotoName);
+        BitmapUtils.saveScaledBitmap(photoFile.getAbsolutePath(), 480, 640, saveScaleFile.getAbsolutePath(), Bitmap.CompressFormat.JPEG, 80);
+        saveScaleFile = new File(dirFile, saveScalePhotoName);
+        DialogUtils.showLoadingDialog(getContext(), false);
+        new FileUploadTask(new FileUploadTask.CallBack() {
+            @Override
+            public void onSuccess(JSONObject jsonObject) {
+                DialogUtils.closeLoadingDialog();
+                Toast.makeText(getContext(), "图片上传成功", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailed(AppException exception) {
+                DialogUtils.closeLoadingDialog();
+                Toast.makeText(getContext(), exception.getErrorMsg(), Toast.LENGTH_SHORT).show();
+            }
+        }).execute(StorageUtils.getDataFromSharedPreference(SharedKeys.CURR_USERID), "" + AppConst.FileType.PHOTO, "" + saveScaleFile.length() / 1024,
+                saveScaleFile.getAbsolutePath());
     }
 }

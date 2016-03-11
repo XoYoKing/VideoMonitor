@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,11 +13,11 @@ import momo.cn.edu.fjnu.videomoniter.exception.AppException;
 import momo.cn.edu.fjnu.videomoniter.service.NetService;
 
 /**
- * 登录异步块
- * Created by GaoFei on 2016/3/10.
+ * 文件上传异步块
+ * Created by GaoFei on 2016/3/11.
  */
-public class LoginTask extends AsyncTask<String, Integer, Integer>{
-    public static final String TAG = LoginTask.class.getSimpleName();
+public class FileUploadTask extends AsyncTask<String, Integer, Integer>{
+    public static final String TAG = FileUploadTask.class.getSimpleName();
     public interface CallBack{
         void onSuccess(JSONObject jsonObject);
         void onFailed(AppException exception);
@@ -25,17 +26,19 @@ public class LoginTask extends AsyncTask<String, Integer, Integer>{
     private JSONObject mJsonResult;
     private AppException mException;
 
-    public LoginTask(CallBack callBack){
+    public FileUploadTask(CallBack callBack){
         this.mCallback = callBack;
     }
 
     @Override
     protected Integer doInBackground(String... params) {
         Map<String, Object> reqParams = new LinkedHashMap<>();
-        reqParams.put("user_name", params[0]);
-        reqParams.put("password", params[1]);
+        reqParams.put("uid", params[0]);
+        reqParams.put("type", params[1]);
+        reqParams.put("file_size", params[2]);
+        reqParams.put("file", new File(params[3]));
         try {
-            mJsonResult = NetService.request("LoginService", reqParams);
+            mJsonResult = NetService.request("FileUploadService", reqParams);
         } catch (AppException e) {
             mException = e;
             e.printStackTrace();
